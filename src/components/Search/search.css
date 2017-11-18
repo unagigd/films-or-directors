@@ -1,0 +1,24 @@
+.search {
+    background-color: #555;
+}
+
+.search__container {
+    padding: 1em;
+}
+
+.search__text-input {
+    background-color: transparent;
+    color: #fff;
+    border: 0;
+    border-bottom: 1px solid red;
+    border-radius: 0px;
+}
+
+.search_button,
+.search__type-button + .search__type-button{
+    margin-left: 1em;
+}
+
+.search_button {
+    float: right;
+}

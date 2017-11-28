@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 
 hydrate.render(
-    <Provider store={store}>
+    <Provider store={store(window.PRELOADED_STATE)}>
         <BrowserRouter>
             <AppContainer />
         </BrowserRouter>

@@ -1,9 +1,12 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom'
+import { Provider } from 'react-redux';
+
+import store from '../src/store'
 import AppContainer from '../src/containers/AppContainer';
 
-const getHtml = (html) => `
+const getHtml = (html, state) => `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,19 +22,36 @@ const getHtml = (html) => `
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">${html}</div>
-    <script type="text/javascript" src="/static/js/main.c5b90a74.js"></script>
+    <script>
+      window.PRELOADED_STATE = ${state.searchType ? JSON.stringify(state).replace(/</g, '\\u003c') : undefined}
+    </script>
+
+    <script type="text/javascript" src="/static/js/main.52a0fb93.js"></script>
   </body>
 </html>
 `;
 
 const renderPage = (req, res) => {
   const context = {};
-  const app = (<StaticRouter location={req.url} context={context}>
-    <AppContainer />
-  </StaticRouter>)
+  const reduxStore = store();
+
+  const app = (
+    <Provider store={reduxStore}>
+      <StaticRouter location={req.url} context={context}>
+        <AppContainer />
+      </StaticRouter>
+    </Provider>
+  )
 
   const html = renderToString(app)
-  res.send(html(html));;
+
+  if (context.url) {
+    res.redirect(context.url);
+  }  
+
+  const preloadedState = reduxStore.getState();
+
+  res.send(getHtml(html, preloadedState));
 };
 
 export default renderPage;
